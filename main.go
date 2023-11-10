@@ -54,34 +54,29 @@ func fetchWeatherData(location string) (WeatherResponse, error) {
 }
 
 func weatherHandler(c echo.Context) error {
-	// Dapatkan parameter lokasi dari query string
+	
 	location := c.QueryParam("location")
 
-	// Lakukan pemeriksaan jika parameter lokasi kosong
+	
 	if location == "" {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Parameter Lokasi dibutuhkan"})
 	}
 
-	// Ambil data cuaca berdasarkan lokasi
 	weatherData, err := fetchWeatherData(location)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Gagal mengambil data cuaca"})
 	}
 
-	// Mengirimkan data cuaca sebagai respons JSON
 	return c.JSON(http.StatusOK, weatherData)
 }
 
 func main() {
 	e := echo.New()
 
-	// Serve HTML file at root ("/")
 	e.Static("/", "views") 
 
-	// Handle weather requests at the "/weather" endpoint
 	e.GET("/weather", weatherHandler)
 
-	// Start the server
 	port := 8080
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", port)))
 }
